@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import useSVG, { DrawFunction } from "../hooks/SVGHook";
+import InstructionsModal from "./InstructionsModal";
 
 interface Circle {
   x: number;
@@ -16,6 +17,7 @@ interface Line {
 }
 
 const SVGComponent: React.FC = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [circles, setCircles] = useState<Circle[]>([]);
   const [lines, setLines] = useState<Line[]>([]);
   const [dragging, setDragging] = useState(false);
@@ -408,6 +410,17 @@ const SVGComponent: React.FC = () => {
         preserveAspectRatio="xMidYMid meet"
       />
       <div className="flex justify-center gap-4 mt-4">
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-500 transition-colors duration-200"
+        >
+          Instructions
+        </button>
+
+        {isModalOpen && (
+          <InstructionsModal onClose={() => setIsModalOpen(false)} />
+        )}
+
         <button
           onClick={() => {
             setCircles([]);
