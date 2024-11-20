@@ -56,9 +56,9 @@ const InstructionsModal: React.FC<InstructionsModalProps> = ({ onClose }) => {
         <div className="flex justify-center mt-6">
           <button
             onClick={onClose}
-            className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+            className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-400"
           >
-            Got It
+            Got It!
           </button>
         </div>
       </div>
