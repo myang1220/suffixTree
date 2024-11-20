@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/suffixTree/static/css/main.e07dff3f.css",
+    "main.js": "/suffixTree/static/js/main.6d77a47e.js",
+    "index.html": "/suffixTree/index.html",
+    "main.e07dff3f.css.map": "/suffixTree/static/css/main.e07dff3f.css.map",
+    "main.6d77a47e.js.map": "/suffixTree/static/js/main.6d77a47e.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e07dff3f.css",
+    "static/js/main.6d77a47e.js"
+  ]
+}
