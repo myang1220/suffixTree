@@ -35,17 +35,30 @@ const InstructionsModal: React.FC<InstructionsModalProps> = ({ onClose }) => {
       description:
         "Select a node or line and press Delete or Backspace to remove it.",
     },
+    {
+      title: "Clear All Nodes",
+      description: "Press the Clear Nodes button to delete all nodes.",
+    },
+    {
+      title: "Export To LaTeX",
+      description:
+        "Press the Export To LaTex button to copy the SVG LaTeX code to your clipboard.",
+    },
+    {
+      title: "Export To PNG",
+      description: "Press the Export to PNG button to export the SVG as a PNG.",
+    },
   ];
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white p-8 rounded-lg max-w-md w-full">
-        <h2 className="text-2xl font-bold mb-6 text-center">
+      <div className="bg-white p-8 rounded-lg max-w-3xl w-full">
+        <h2 className="text-2xl font-bold mb-4 text-center">
           Suffix Tree Editor Instructions
         </h2>
-        <ul className="space-y-4">
+        <ul className="space-y-2">
           {instructions.map((instruction, index) => (
-            <li key={index} className="border-b pb-4 last:border-b-0">
+            <li key={index} className="border-b pb-2 last:border-b-0">
               <h3 className="font-semibold text-lg mb-2">
                 {instruction.title}
               </h3>
@@ -53,7 +66,7 @@ const InstructionsModal: React.FC<InstructionsModalProps> = ({ onClose }) => {
             </li>
           ))}
         </ul>
-        <div className="flex justify-center mt-6">
+        <div className="flex justify-center mt-2">
           <button
             onClick={onClose}
             className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-400"

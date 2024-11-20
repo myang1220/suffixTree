@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import useSVG, { DrawFunction } from "../hooks/SVGHook";
 import InstructionsModal from "./InstructionsModal";
+import { Store } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
 
 interface Circle {
   x: number;
@@ -395,6 +397,131 @@ const SVGComponent: React.FC = () => {
     }
   };
 
+  // New function to convert SVG to LaTeX TikZ code
+  const convertToLatexTikZ = async () => {
+    // Normalize coordinates to a 10x10 grid
+    const normalizeCoordinate = (coord: number, isY: boolean = false) => {
+      // Assuming original SVG is 1000x1000
+      const normalized = coord / 100;
+      return isY ? (10 - normalized).toFixed(1) : normalized.toFixed(1);
+    };
+
+    // Generate LaTeX TikZ code
+    let latexCode = "\\begin{center}\n\\begin{tikzpicture}\n";
+
+    // Add nodes (circles)
+    circles.forEach((circle) => {
+      const nodeCommand = circle.label
+        ? `\\node[draw, circle, minimum size=0.6cm] (${
+            circle.id
+          }) at (${normalizeCoordinate(circle.x)},${normalizeCoordinate(
+            circle.y,
+            true
+          )}) {${circle.label}};\n`
+        : `\\node[draw, circle, minimum size=0.6cm] (${
+            circle.id
+          }) at (${normalizeCoordinate(circle.x)},${normalizeCoordinate(
+            circle.y,
+            true
+          )}) {};\n`;
+      latexCode += nodeCommand;
+    });
+
+    // Add lines with arrows
+    lines.forEach((line) => {
+      const lineCommand = line.label
+        ? `\\draw[->] (${line.start.id}) -- node[midway, sloped, above] {${line.label}} (${line.end.id});\n`
+        : `\\draw[->] (${line.start.id}) -- (${line.end.id});\n`;
+      latexCode += lineCommand;
+    });
+
+    latexCode += "\\end{tikzpicture}\n\\end{center}";
+
+    // copy to clipboard
+    await navigator.clipboard.writeText(latexCode);
+
+    Store.addNotification({
+      title: "Success!",
+      message: "LaTeX copied to clipboard",
+      type: "success",
+      insert: "top",
+      container: "top-center",
+      animationIn: ["animate__animated", "animate__fadeIn"],
+      animationOut: ["animate__animated", "animate__fadeOut"],
+      dismiss: {
+        duration: 2000,
+        onScreen: true,
+      },
+    });
+  };
+
+  // Function to export SVG as PNG
+  const exportToPNG = async () => {
+    const svgElement = svgRef.current;
+    if (!svgElement) return;
+
+    // Create a blob from the SVG
+    const svgData = new XMLSerializer().serializeToString(svgElement);
+    const svgBlob = new Blob([svgData], {
+      type: "image/svg+xml;charset=utf-8",
+    });
+    const svgUrl = URL.createObjectURL(svgBlob);
+
+    // Create an Image object to load the SVG
+    const img = new Image();
+    img.src = svgUrl;
+
+    await new Promise((resolve, reject) => {
+      img.onload = () => {
+        // Create a canvas element
+        const canvas = document.createElement("canvas");
+        canvas.width = 1000; // Match SVG viewBox width
+        canvas.height = 1000; // Match SVG viewBox height
+
+        // Get the canvas context and draw the image
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.fillStyle = "#f3f4f6"; // Match bg-gray-100
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0);
+
+          // Convert canvas to PNG and trigger download
+          canvas.toBlob((blob) => {
+            if (blob) {
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = "diagram.png";
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              URL.revokeObjectURL(url);
+            }
+          }, "image/png");
+        }
+
+        // Clean up
+        URL.revokeObjectURL(svgUrl);
+        resolve(null);
+      };
+      img.onerror = reject;
+    });
+
+    Store.addNotification({
+      title: "Success!",
+      message: "PNG file downloaded",
+      type: "success",
+      insert: "top",
+      container: "top-center",
+      animationIn: ["animate__animated", "animate__fadeIn"],
+      animationOut: ["animate__animated", "animate__fadeOut"],
+      dismiss: {
+        duration: 2000,
+        onScreen: true,
+      },
+    });
+  };
+
   const svgRef = useSVG(draw);
 
   return (
@@ -420,7 +547,18 @@ const SVGComponent: React.FC = () => {
         {isModalOpen && (
           <InstructionsModal onClose={() => setIsModalOpen(false)} />
         )}
-
+        <button
+          onClick={convertToLatexTikZ}
+          className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-400 transition-colors duration-200"
+        >
+          Export to LaTeX
+        </button>
+        <button
+          onClick={exportToPNG}
+          className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-400 transition-colors duration-200"
+        >
+          Export to PNG
+        </button>
         <button
           onClick={() => {
             setCircles([]);
