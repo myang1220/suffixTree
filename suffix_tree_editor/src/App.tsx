@@ -4,8 +4,11 @@ import SVGComponent from "./components/SVGComponent";
 
 const App: React.FC = () => {
   return (
-    <div className="flex justify-center items-center w-full h-screen">
-      <div className="w-4/5 h-4/5">
+    <div className="flex flex-col h-screen items-center pb-10">
+      <header className="flex justify-center text-bold text-5xl py-8">
+        <h1>Suffix Tree Editor</h1>
+      </header>
+      <div className="flex-1 overflow-hidden w-4/5">
         <SVGComponent />
       </div>
     </div>
